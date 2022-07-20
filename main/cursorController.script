@@ -1,4 +1,5 @@
 local cursor = require "in.cursor"
+local canDragCard = false
 
 function init(self)
 	if not go.get("#cursor", "acquire_input_focus") then
@@ -9,10 +10,15 @@ function init(self)
 	cursor.listen(msg.url("#cursor"), cursor.DRAG_START, function (message_id, message)
 		print ("drag")
 		if message.group == hash("cards") then
+			if canDragCard == false then
+				return true
+			end
 			print("dragging a card")
-			--uncomment if prevent drag needed
-			--return true
+		elseif message.group == hash("dropzone") then
+			--prevent drag
+			return true
 		end
+		
 	end)
 end
 
@@ -25,18 +31,38 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == cursor.OVER then
 		print("Cursor over", message.id, message.group, message.x, message.y)
+		if message.group == hash("dropzone") then
+			self.over_dropzone = true
+			print ("true!")
+		end
 	elseif message_id == cursor.OUT then
 		print("Cursor out", message.id, message.group, message.x, message.y)
+		if message.group == hash("dropzone") then
+			self.over_dropzone = false
+			print ("false!")
+		end
 	elseif message_id == cursor.PRESSED then
 		print("Pressed", message.id, message.group, message.x, message.y)
+		if message.group == hash("cards") then
+			local url = msg.url(message.id)
+			url.fragment = "card"
+			canDragCard = go.get(url, "isDraggable")
+			print (canDragCard)
+		end
 	elseif message_id == cursor.RELEASED then
 		print("Released", message.id, message.group, message.x, message.y)
+		if message.group == hash("cards") then
+			canDragCard = false
+		end
 	elseif message_id == cursor.CLICKED then
 		print("Clicked", message.id, message.group, message.x, message.y)
 	elseif message_id == cursor.DRAG_START then
 		print("Drag started", message.id, message.group, message.x, message.y)
 	elseif message_id == cursor.DRAG_END then
 		print("Drag ended", message.id, message.group, message.x, message.y)
+		if message.group == hash("cards") and self.over_dropzone then
+			go.delete(message.id)
+		end
 	elseif message_id == cursor.DRAG then
 		print("Drag", message.id, message.group, message.x, message.y, message.dx, message.dy)
 	end

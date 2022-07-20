@@ -1,5 +1,0 @@
-function init(self)
-	for i = 1, 5 do
-		factory.create("#cyanCardFactory", vmath.vector3(110 + (i * 50), 210, 1), nil, nil, 0.3)
-	end
-end
