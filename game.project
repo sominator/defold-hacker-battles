@@ -17,4 +17,5 @@ dependencies#0 = https://github.com/britzl/defold-input/archive/master.zip
 
 [graphics]
 max_debug_vertices = 50000
+texture_profiles = /main/textureProfile.texture_profiles
 
