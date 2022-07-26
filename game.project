@@ -16,5 +16,5 @@ title = Hacker Battles
 dependencies#0 = https://github.com/britzl/defold-input/archive/master.zip
 
 [graphics]
-texture_profiles = /builtins/graphics/default.texture_profiles
+max_debug_vertices = 50000
 

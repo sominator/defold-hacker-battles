@@ -1,5 +1,6 @@
 local cursor = require "in.cursor"
 local canDragCard = false
+local cardsInDropZone = 0
 
 function init(self)
 	if not go.get("#cursor", "acquire_input_focus") then
@@ -61,9 +62,13 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == cursor.DRAG_END then
 		print("Drag ended", message.id, message.group, message.x, message.y)
 		if message.group == hash("cards") and self.over_dropzone then
-			go.delete(message.id)
+			local p = vmath.vector3(550 + (cardsInDropZone * 50), 547, 1)
+			go.set_position(p, message.id)
+			cardsInDropZone = cardsInDropZone + 1
 		end
 	elseif message_id == cursor.DRAG then
 		print("Drag", message.id, message.group, message.x, message.y, message.dx, message.dy)
+		local p = go.get_position(message.id)
+		go.set_position(vmath.vector3(p.x, p.y, 1), message.id)
 	end
 end
