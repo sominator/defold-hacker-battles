@@ -1,3 +1,4 @@
+--import button script from /in folder
 local button = require "in.button"
 local pressed = false
 
@@ -6,6 +7,7 @@ function init(self)
 	button.register("text", function()
 		print ("button!")
 		if not pressed then 
+			--spawn player cards, set their isDraggable property to true, and spawn opponentCardBacks
 			for i = 1, 5 do
 				factory.create("/spawner#playerCardFactory", vmath.vector3(110 + (i * 50), 210, 0), nil, {isDraggable = true}, 0.3)
 				factory.create("/spawner#opponentCardBackFactory", vmath.vector3(110 + (i * 50), 810, 1), nil, nil, 0.3)

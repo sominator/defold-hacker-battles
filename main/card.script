@@ -1,3 +1,4 @@
+--demonstrate usage of game object properties (public in the inspector)
 go.property("isDraggable", false)
 
 function init(self)

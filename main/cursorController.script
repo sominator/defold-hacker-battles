@@ -1,3 +1,4 @@
+--import cursor script from /in folder and declare local variables
 local cursor = require "in.cursor"
 local canDragCard = false
 local cardsInDropZone = 0
@@ -10,13 +11,14 @@ function init(self)
 
 	cursor.listen(msg.url("#cursor"), cursor.DRAG_START, function (message_id, message)
 		print ("drag")
+		--determine whether card should be draggable
 		if message.group == hash("cards") then
 			if canDragCard == false then
 				return true
 			end
 			print("dragging a card")
 		elseif message.group == hash("dropzone") then
-			--prevent drag
+			--prevent dragging of dropzones
 			return true
 		end
 		
@@ -34,13 +36,11 @@ function on_message(self, message_id, message, sender)
 		print("Cursor over", message.id, message.group, message.x, message.y)
 		if message.group == hash("dropzone") then
 			self.over_dropzone = true
-			print ("true!")
 		end
 	elseif message_id == cursor.OUT then
 		print("Cursor out", message.id, message.group, message.x, message.y)
 		if message.group == hash("dropzone") then
 			self.over_dropzone = false
-			print ("false!")
 		end
 	elseif message_id == cursor.PRESSED then
 		print("Pressed", message.id, message.group, message.x, message.y)
@@ -61,6 +61,7 @@ function on_message(self, message_id, message, sender)
 		print("Drag started", message.id, message.group, message.x, message.y)
 	elseif message_id == cursor.DRAG_END then
 		print("Drag ended", message.id, message.group, message.x, message.y)
+		--incrementally display cards over dropzone
 		if message.group == hash("cards") and self.over_dropzone then
 			local p = vmath.vector3(550 + (cardsInDropZone * 50), 547, 1)
 			go.set_position(p, message.id)
@@ -68,6 +69,7 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == cursor.DRAG then
 		print("Drag", message.id, message.group, message.x, message.y, message.dx, message.dy)
+		--set z position to 1 to bring dragged card to top
 		local p = go.get_position(message.id)
 		go.set_position(vmath.vector3(p.x, p.y, 1), message.id)
 	end
