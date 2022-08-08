@@ -1,0 +1,31 @@
+local ColyseusClient = require "colyseus.client"
+
+local client
+local room
+
+function init(self)
+	client = ColyseusClient.new("ws://localhost:2567")
+
+	client:join_or_create("chat", {}, function(err, _room)
+		if err then
+			print("JOIN ERROR: " .. err)
+			return
+		end
+
+		print("JOIN SUCCESSFUL")
+		room = _room
+
+		room:on_message("messages", function(message)
+			print(message)
+			room:send("welcome", "Welcome!")	
+		end)
+
+		room:on_message("welcome", function(message)
+			print(message)
+		end)
+
+		room:on_message("welcome-acknowledged", function(message)
+			print(message)
+		end)
+	end)
+end
